@@ -1,5 +1,4 @@
 from django.shortcuts import render
-import requests
 import json
 import requests
 import pprint as pp
