@@ -13,7 +13,7 @@ def index(request):
 
 def pokedex(request):
     pokemons = requests.get("https://pokeapi.co/api/v2/pokemon?limit=251").json()
-    test = cavamaider(pokemons)
+    test = get_pokemons_fr(pokemons)
     context = {'pokemons': pokemons, 'test': test}
     return render(request, template_name='pokedex.html', context=context)
 
