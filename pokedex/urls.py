@@ -19,5 +19,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.pokedex, name="pokedex")
+    # path('', views.pokedex, name="pokedex"),
+    path('<int:number>', views.pokemon, name="pokemon")
 ]

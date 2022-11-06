@@ -29,3 +29,19 @@ def get_pokemons_fr(pokemons):
             if item['language']['name'] == "fr":
                 pokemons_names["results"].append(item["name"])
     return pokemons_names
+
+
+def pokemon(number, request):
+    pokemon_info = {'results': []}
+    pokemons = requests.get("https://pokeapi.co/api/v2/pokemon/" + number).json()
+    name = pokemons["name"]
+    pokemon_info['results'].append(name)
+    type = pokemons["type"]
+    url = "https://pokeapi.co/api/v2/type/" + type
+    response = requests.get(url)
+    data = response.json()
+    for item in data["names"]:
+        if item["language"]['name'] == "fr":
+            pokemon_info['results'].append(item['name'])
+    context = {'info': pokemon_info}
+    return render(request, template_name='pokedex.html', context=context)
