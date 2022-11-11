@@ -4,11 +4,8 @@
 {% block main %}
 
     <div class="test">
-<!--        {% for pokemon in pokemons.results %}-->
-<!--            {{ pokemon.name }}-->
-<!--        {% endfor %}{% endcomment %}-->
-<!--        {{ test.results }}-->
-        {{ pokemon_info }}
+
+
     </div>
     <div id="pokedex">
         <div id="left">
@@ -69,10 +66,14 @@
         </div>
         <div id="right">
             <div id="stats">
-                <strong>Name:</strong> Psyduck<br/>
-                <strong>Type:</strong> Water<br/>
-                <strong>Height:</strong> 2'072''<br/>
-                <strong>Weight:</strong> 43.2 lbs.<br/><br/>
+                <strong>Nom:</strong>
+                 {{ pokemon.name }}
+                <br/>
+                <strong>Type:</strong>
+                {{ pokemon_info.types }}
+                <br/>
+                <strong>Taille:</strong> 2'072''<br/>
+                <strong>Poids:</strong> 43.2 lbs.<br/><br/>
                 <strong>The duck Pokemon</strong><br/>
                 Uses mysterious powers to perform various attacks.
             </div>
