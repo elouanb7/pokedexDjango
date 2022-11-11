@@ -28,7 +28,6 @@ def pokemon(request, number):
     pokemon_info['sprite'] = get_pokemon_sprite(pokemon)
     pokemon_info['description'] = get_pokemon_description(pokemon)
     pokemon_info['title'] = get_pokemon_title(pokemon)
-    test = get_previous_path(request)
     context = {'pokemon_info': pokemon_info}
     return render(request, template_name='pokedex.html', context=context)
 
@@ -40,7 +39,6 @@ def get_pokemon_types(pokemon):
         type_url = type["type"]["url"]
         response = requests.get(type_url)
         data = response.json()
-        print(data)
         for item in data["names"]:
             if item["language"]['name'] == "fr":
                 temp += item['name'] + ', '
@@ -53,7 +51,6 @@ def get_pokemon_types(pokemon):
 def get_pokemon_name(pokemon):
     fr_name = None
     eng_name = pokemon["name"]  # name
-    print(eng_name)
     url = "https://pokeapi.co/api/v2/pokemon-species/" + eng_name
     response = requests.get(url)
     data = response.json()
@@ -87,7 +84,6 @@ def get_pokemon_description(pokemon):
     response = requests.get(url)
     data = response.json()
     last_version = list(data["flavor_text_entries"])
-    print(last_version)
 
     for item in data["flavor_text_entries"]:
             if item['version']['name'] == "shield" and item['language']['name'] == "fr":
@@ -111,6 +107,7 @@ def get_previous_path(request):
     pokemon_id = path.split('/pokedex/')[1]
     pokemon_id += -1
     path = path + str(pokemon_id)
+    print(path)
     return {
        'previous_path': path
     }
