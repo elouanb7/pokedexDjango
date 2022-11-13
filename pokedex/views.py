@@ -20,15 +20,19 @@ def index(request):
 
 def pokemon(request, number):
     pokemon_info = {}
+    path_info = {}
     pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(number)).json()
     pokemon_info['types'] = get_pokemon_types(pokemon)
     pokemon_info['name'] = get_pokemon_name(pokemon)
     pokemon_info['weight'] = get_pokemon_weight(pokemon)
     pokemon_info['height'] = get_pokemon_height(pokemon)
-    pokemon_info['sprite'] = get_pokemon_sprite(pokemon)
+    pokemon_info['sprites'] = get_pokemon_sprites(pokemon)
     pokemon_info['description'] = get_pokemon_description(pokemon)
     pokemon_info['title'] = get_pokemon_title(pokemon)
-    context = {'pokemon_info': pokemon_info}
+    paths = get_paths(request)
+    path_info['previous'] = paths[0]
+    path_info['next'] = paths[1]
+    context = {'pokemon_info': pokemon_info, 'path_info': path_info}
     return render(request, template_name='pokedex.html', context=context)
 
 
@@ -61,8 +65,9 @@ def get_pokemon_name(pokemon):
 
 
 def get_pokemon_weight(pokemon):
-    lbs_weight = pokemon["weight"]
-    kg_weight = ' ' + str(round(lbs_weight * 0.453592, 2)) + 'kg'
+    hecg_weight = pokemon["weight"]
+    kg_weight = ' ' + str(round(hecg_weight / 10, 1)) + 'kg'
+    # kg_weight = ' ' + str(round(lbs_weight * 0.453592, 2)) + 'kg'
     return kg_weight
 
 
@@ -72,9 +77,17 @@ def get_pokemon_height(pokemon):
     return m_height
 
 
-def get_pokemon_sprite(pokemon):
-    sprite = pokemon["sprites"]["front_default"]  # name
-    return sprite
+def get_pokemon_sprites(pokemon):
+    pokemon_sprites = {'sprite_front_default': pokemon["sprites"]["front_default"],
+                       'sprite_back_default': pokemon["sprites"]["back_default"],
+                       'sprite_front_shiny': pokemon["sprites"]["front_shiny"],
+                       'sprite_back_shiny': pokemon["sprites"]["back_shiny"],
+                       'sprite_female_front_shiny': pokemon["sprites"]["front_shiny_female"],
+                       'sprite_female_back_shiny': pokemon["sprites"]["back_shiny_female"],
+                       'sprite_female_front': pokemon["sprites"]["front_female"],
+                       'sprite_female_back': pokemon["sprites"]["back_female"],
+                       }
+    return pokemon_sprites
 
 
 def get_pokemon_description(pokemon):
@@ -83,12 +96,13 @@ def get_pokemon_description(pokemon):
     url = "https://pokeapi.co/api/v2/pokemon-species/" + eng_name
     response = requests.get(url)
     data = response.json()
-    last_version = list(data["flavor_text_entries"])
-
+    entries = list(data["flavor_text_entries"])
+    last_version = entries[len(entries)-2]['version']['name']
     for item in data["flavor_text_entries"]:
-            if item['version']['name'] == "shield" and item['language']['name'] == "fr":
-                description = item["flavor_text"]
+        if item['version']['name'] == last_version and item['language']['name'] == "fr":
+            description = item["flavor_text"]
     return description
+
 
 def get_pokemon_title(pokemon):
     title = None
@@ -102,12 +116,16 @@ def get_pokemon_title(pokemon):
     return title
 
 
-def get_previous_path(request):
+def get_paths(request):
     path = request.get_full_path()
-    pokemon_id = path.split('/pokedex/')[1]
-    pokemon_id += -1
-    path = path + str(pokemon_id)
-    print(path)
-    return {
-       'previous_path': path
-    }
+    pokemon_id = int(path.split('/pokedex/')[1])
+    splited_path = path.split(str(pokemon_id))[0]
+    if pokemon_id > 1:
+        previous_path = splited_path + str(pokemon_id - 1)
+    else:
+        previous_path = splited_path + str(pokemon_id)
+    if pokemon_id < 251:
+        next_path = splited_path + str(pokemon_id + 1)
+    else:
+        next_path = splited_path + str(pokemon_id)
+    return previous_path, next_path

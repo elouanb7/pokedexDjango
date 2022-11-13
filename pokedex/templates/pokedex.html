@@ -3,10 +3,6 @@
 {% block head %}{% endblock %}
 {% block main %}
 
-    <div class="test">
-
-
-    </div>
     <div id="pokedex">
         <div id="left">
             <div id="logo"></div>
@@ -32,12 +28,28 @@
                     <div id="buttontopPicture2"></div>
                 </div>
                 <div id="picture">
-                    <img src={{ pokemon_info.sprite }} alt="psykokwak"
-                         height="170"/>
+                    <div id="picture0">
+                        <img src="{{ pokemon_info.sprites.sprite_front_default }}" alt="picture"
+                             height="170"/>
+                    </div>
+                    <div id="picture1" hidden><img src="{{ pokemon_info.sprites.sprite_back_default }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture2" hidden><img src="{{ pokemon_info.sprites.sprite_front_shiny }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture3" hidden><img src="{{ pokemon_info.sprites.sprite_back_shiny }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture4" hidden><img src="{{ pokemon_info.sprites.sprite_female_front }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture5" hidden><img src="{{ pokemon_info.sprites.sprite_female_back }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture6" hidden><img src="{{ pokemon_info.sprites.sprite_female_front_shiny }}"
+                                                   alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture7" hidden><img src="{{ pokemon_info.sprites.sprite_female_back_shiny }}"
+                                                   alt="picture"
+                                                   height="170"/></div>
                 </div>
-                <div id="buttonbottomPicture">
-                    back front
-                </div>
+                <div id="buttonbottomPicture" style="cursor: pointer;"></div>
                 <div id="speakers">
                     <div class="sp"></div>
                     <div class="sp"></div>
@@ -45,20 +57,24 @@
                     <div class="sp"></div>
                 </div>
             </div>
-            <div id="bigbluebutton">shiny</div>
-            <div id="barbutton1">female</div>
-            <div id="barbutton2">male</div>
+            <div id="bigbluebutton" style="cursor: pointer;"></div>
+
+            <div id="barbutton1" style="cursor: pointer;"></div>
+            <div id="barbutton2" style="cursor: pointer;"></div>
             <div id="cross">
-                <div id="leftcross">
-                    {{ current_path_previous }}
-                    <a href="{% previous_path %}"><div id="leftT">previous</div></a>
-                </div>
+                <a href="{{ path_info.previous }}">
+                    <div id="leftcross">
+                        <div id="leftT"></div>
+                    </div>
+                </a>
                 <div id="topcross">
                     <div id="upT"></div>
                 </div>
-                <div id="rightcross">
-                    <div id="rightT">next</div>
-                </div>
+                <a href="{{ path_info.next }}">
+                    <div id="rightcross">
+                        <div id="rightT"></div>
+                    </div>
+                </a>
                 <div id="midcross">
                     <div id="midCircle"></div>
                 </div>
@@ -107,4 +123,150 @@
         </div>
     </div>
 {% endblock %}
+{% block javascripts %}
+    <script>
+        let pictures = [document.getElementById("picture0"), document.getElementById("picture1"),
+            document.getElementById("picture2"), document.getElementById("picture3"),
+            document.getElementById("picture4"), document.getElementById("picture5"),
+            document.getElementById("picture6"), document.getElementById("picture7")]
 
+        document.getElementById('bigbluebutton').addEventListener('click', change_picture_shiny);
+        document.getElementById('barbutton1').addEventListener('click', change_picture_female);
+        document.getElementById('barbutton2').addEventListener('click', change_picture_male);
+        document.getElementById('buttonbottomPicture').addEventListener('click', change_picture_side);
+
+        function change_picture_shiny() {
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                if (pictures[0].hidden === false || pictures[2].hidden === false) {
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[2].hidden = false
+                    } else {
+                        pictures[0].hidden = false
+                        pictures[2].hidden = true
+                    }
+                } else {
+                    if (pictures[1].hidden === false) {
+                        pictures[1].hidden = true
+                        pictures[3].hidden = false
+                    } else {
+                        pictures[1].hidden = false
+                        pictures[3].hidden = true
+                    }
+                }
+            } else {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[6].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[6].hidden = true
+                    }
+                } else {
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[5].hidden = false
+                        pictures[7].hidden = true
+                    }
+                }
+            }
+        }
+
+        function change_picture_female() {
+            if (pictures[4].src !== undefined) {
+                if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                    if (pictures[0].hidden === false || pictures[2].hidden === false) {
+                        if (pictures[0].hidden === false) {
+                            pictures[0].hidden = true
+                            pictures[4].hidden = false
+                        } else {
+                            pictures[6].hidden = false
+                            pictures[2].hidden = true
+                        }
+                    } else {
+                        if (pictures[1].hidden === false) {
+                            pictures[1].hidden = true
+                            pictures[5].hidden = false
+                        } else {
+                            pictures[7].hidden = false
+                            pictures[3].hidden = true
+                        }
+                    }
+                }
+            }
+        }
+
+        function change_picture_male() {
+            if (pictures[4].hidden === false || pictures[5].hidden === false || pictures[6].hidden === false || pictures[7].hidden === false) {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[0].hidden = false
+                    } else {
+                        pictures[2].hidden = false
+                        pictures[6].hidden = true
+                    }
+                } else {
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[1].hidden = false
+                    } else {
+                        pictures[3].hidden = false
+                        pictures[7].hidden = true
+                    }
+                }
+            }
+        }
+
+        function change_picture_side() {
+            //male
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                //shiny
+                if (pictures[2].hidden === false || pictures[3].hidden === false) {
+                    //front
+                    if (pictures[2].hidden === false) {
+                        pictures[2].hidden = true
+                        pictures[3].hidden = false
+                        //back
+                    } else {
+                        pictures[2].hidden = false
+                        pictures[3].hidden = true
+                    }
+                    //pas shiny
+                } else {
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[1].hidden = false
+                    } else {
+                        pictures[0].hidden = false
+                        pictures[1].hidden = true
+                    }
+                }
+                //femele
+            } else {
+                //shiny
+                if (pictures[6].hidden === false || pictures[7].hidden === false) {
+                    if (pictures[6].hidden === false) {
+                        pictures[6].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[6].hidden = false
+                        pictures[7].hidden = true
+                    }
+                    //pas shiny
+                } else {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[5].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[5].hidden = true
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
