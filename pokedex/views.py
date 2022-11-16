@@ -19,6 +19,7 @@ def index(request):
 
 
 def pokemon(request, number):
+
     pokemon_info = {}
     path_info = {}
     pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(number)).json()
@@ -30,6 +31,7 @@ def pokemon(request, number):
     pokemon_info['description'] = get_pokemon_description(pokemon)
     pokemon_info['title'] = get_pokemon_title(pokemon)
     paths = get_paths(request)
+
     path_info['previous'] = paths[0]
     path_info['next'] = paths[1]
     context = {'pokemon_info': pokemon_info, 'path_info': path_info}
@@ -97,7 +99,7 @@ def get_pokemon_description(pokemon):
     response = requests.get(url)
     data = response.json()
     entries = list(data["flavor_text_entries"])
-    last_version = entries[len(entries)-2]['version']['name']
+    last_version = entries[len(entries) - 2]['version']['name']
     for item in data["flavor_text_entries"]:
         if item['version']['name'] == last_version and item['language']['name'] == "fr":
             description = item["flavor_text"]
@@ -129,3 +131,13 @@ def get_paths(request):
     else:
         next_path = splited_path + str(pokemon_id)
     return previous_path, next_path
+
+
+def get_user_input(request):
+    # path_user_input = get_user_input(request)
+    path = request.get_full_path()
+    pokemon_id = int(path.split('/pokedex/')[1])
+    splited_path = path.split(str(pokemon_id))[0]
+    path = splited_path + str(request.GET.get("inputText"))
+    print(path)
+    return path
