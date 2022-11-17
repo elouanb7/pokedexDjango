@@ -97,10 +97,10 @@
                 {{ pokemon_info.description }}
             </div>
             <div id="listBlueButtons">
-                {% for pokemon_image in pokemon_info.team %}
+                {% for pokemon in pokemon_info.team %}
                     <div class="blueButton">
-                        {% if pokemon_image %}
-                            <img src="{{ pokemon_image }}" alt="picture" height="30"/>
+                        {% if pokemon.pokemon_image %}
+                            <img src="{{ pokemon.pokemon_image }}" alt="picture" height="30" id="{{ pokemon.pokemon_id }}"/>
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -109,8 +109,8 @@
             <div id="miniButtonGlass5"></div>
             <div id="barbutton3"></div>
             <div id="barbutton4"></div>
-            <button onclick="deleteFromEquipe()" id="yellowBox1">DELETE</button>
-            <button onclick="addToEquipe()" id="yellowBox2">ADD</button>
+            <button onclick="deleteFromEquipe()" id="yellowBox1">SUPPRIMER</button>
+            <button onclick="addToEquipe()" id="yellowBox2">AJOUTER</button>
             <div id="bg_curve1_right"></div>
             <div id="bg_curve2_right"></div>
             <div id="curve1_right"></div>
@@ -133,14 +133,36 @@
             let pokemon_id = window.location.href.split('/pokedex/')[1]
             formData.append('pokemonId', pokemon_id);
 
-            const request = new Request('equipe', {method: 'POST', body: formData});
+            const request = new Request('equipe/1', {method: 'POST', body: formData});
 
             fetch(request)
                 .then(response => response.json())
+                .then(response => {
+                    buttons = [...document.getElementsByClassName("blueButton")];
+                    var imgPokemon = document.createElement("img");
+
+                    imgPokemon.src = response.pokemon.img
+                    imgPokemon.id = response.pokemon.api_id
+
+                    console.log(buttons)
+
+                    buttonAvailable = buttons.find(btn => btn.children.length === 0)
+                    buttonAvailable.appendChild(imgPokemon)
+                })
         }
 
         const deleteFromEquipe = () => {
+            let formData = new FormData();
+            let pokemon_id = window.location.href.split('/pokedex/')[1]
+            formData.append('pokemonId', pokemon_id);
 
+            const request = new Request('equipe/1/'+pokemon_id, {method: 'DELETE', body: formData});
+
+            fetch(request)
+                .then(response => {
+                    let img = document.getElementById(pokemon_id)
+                    img.remove()
+                })
         }
 
         function search() {
