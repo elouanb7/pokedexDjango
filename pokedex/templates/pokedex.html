@@ -96,192 +96,203 @@
                 <strong>{{ pokemon_info.title }}</strong><br/>
                 {{ pokemon_info.description }}
             </div>
-            <div id="blueButtons1">
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-            </div>
-            <div id="blueButtons2">
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
-                <div class="blueButton"></div>
+            <div id="listBlueButtons">
+                {% for pokemon_image in pokemon_info.team %}
+                    <div class="blueButton">
+                        {% if pokemon_image %}
+                            <img src="{{ pokemon_image }}" alt="picture" height="30"/>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
             <div id="miniButtonGlass4"></div>
             <div id="miniButtonGlass5"></div>
             <div id="barbutton3"></div>
             <div id="barbutton4"></div>
-            <form method="post">
-                <div id="yellowBox1">Delete From Team</div>
-            </form>
-
-            <div id="yellowBox2">Add To Team</div>
+            <button onclick="deleteFromEquipe()" id="yellowBox1">DELETE</button>
+            <button onclick="addToEquipe()" id="yellowBox2">ADD</button>
             <div id="bg_curve1_right"></div>
             <div id="bg_curve2_right"></div>
             <div id="curve1_right"></div>
             <div id="curve2_right"></div>
         </div>
+        <div id="divInput" class="form__group field">
+            <input class="form__field" type="number" id="input" value="null" placeholder="Entrez l'id d'un pokemon" >
+            <label class="form__label" id="labelInput" for="input"></label>
+            <input class="pixel2" type="button" onclick="search()" value="Search">
+        </div>
     </div>
-        <label for="inputText">
-            Veuillez entrez l'id d'un pokemon :
-            <input type="number" placeholder="Entrez l'id d'un pokemon..." id="inputText">
-            <input type="button" onclick="search()" value="Submit">
-        </label>
+
+
 
 {% endblock %}
 {% block javascript %}
     <script>
-            function search() {
-                let input = document.getElementById("inputText").value
+        const addToEquipe = () => {
+            let formData = new FormData();
+            let pokemon_id = window.location.href.split('/pokedex/')[1]
+            formData.append('pokemonId', pokemon_id);
+
+            const request = new Request('equipe', {method: 'POST', body: formData});
+
+            fetch(request)
+                .then(response => response.json())
+        }
+
+        const deleteFromEquipe = () => {
+
+        }
+
+        function search() {
+            let input = document.getElementById("input").value
+            if (input !== "" && input !== "0") {
                 let base_url = window.location.href.split('/pokedex/')[0]
                 window.location.replace(base_url + '/pokedex/' + input.toString());
             }
+        }
 
-            let pictures = [document.getElementById("picture0"), document.getElementById("picture1"),
-                document.getElementById("picture2"), document.getElementById("picture3"),
-                document.getElementById("picture4"), document.getElementById("picture5"),
-                document.getElementById("picture6"), document.getElementById("picture7")]
+        let pictures = [document.getElementById("picture0"), document.getElementById("picture1"),
+            document.getElementById("picture2"), document.getElementById("picture3"),
+            document.getElementById("picture4"), document.getElementById("picture5"),
+            document.getElementById("picture6"), document.getElementById("picture7")]
 
-            document.getElementById('bigbluebutton').addEventListener('click', change_picture_shiny);
-            document.getElementById('barbutton1').addEventListener('click', change_picture_female);
-            document.getElementById('barbutton2').addEventListener('click', change_picture_male);
-            document.getElementById('buttonbottomPicture').addEventListener('click', change_picture_side);
+        document.getElementById('bigbluebutton').addEventListener('click', change_picture_shiny);
+        document.getElementById('barbutton1').addEventListener('click', change_picture_female);
+        document.getElementById('barbutton2').addEventListener('click', change_picture_male);
+        document.getElementById('buttonbottomPicture').addEventListener('click', change_picture_side);
 
-            function change_picture_shiny() {
+        function change_picture_shiny() {
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                if (pictures[0].hidden === false || pictures[2].hidden === false) {
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[2].hidden = false
+                    } else {
+                        pictures[0].hidden = false
+                        pictures[2].hidden = true
+                    }
+                } else {
+                    if (pictures[1].hidden === false) {
+                        pictures[1].hidden = true
+                        pictures[3].hidden = false
+                    } else {
+                        pictures[1].hidden = false
+                        pictures[3].hidden = true
+                    }
+                }
+            } else {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[6].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[6].hidden = true
+                    }
+                } else {
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[5].hidden = false
+                        pictures[7].hidden = true
+                    }
+                }
+            }
+        }
+
+        function change_picture_female() {
+            if (pictures[4].src !== undefined) {
                 if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
                     if (pictures[0].hidden === false || pictures[2].hidden === false) {
                         if (pictures[0].hidden === false) {
                             pictures[0].hidden = true
-                            pictures[2].hidden = false
+                            pictures[4].hidden = false
                         } else {
-                            pictures[0].hidden = false
+                            pictures[6].hidden = false
                             pictures[2].hidden = true
                         }
                     } else {
                         if (pictures[1].hidden === false) {
                             pictures[1].hidden = true
-                            pictures[3].hidden = false
+                            pictures[5].hidden = false
                         } else {
-                            pictures[1].hidden = false
+                            pictures[7].hidden = false
                             pictures[3].hidden = true
                         }
                     }
+                }
+            }
+        }
+
+        function change_picture_male() {
+            if (pictures[4].hidden === false || pictures[5].hidden === false || pictures[6].hidden === false || pictures[7].hidden === false) {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[0].hidden = false
+                    } else {
+                        pictures[2].hidden = false
+                        pictures[6].hidden = true
+                    }
                 } else {
-                    if (pictures[4].hidden === false || pictures[6].hidden === false) {
-                        if (pictures[4].hidden === false) {
-                            pictures[4].hidden = true
-                            pictures[6].hidden = false
-                        } else {
-                            pictures[4].hidden = false
-                            pictures[6].hidden = true
-                        }
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[1].hidden = false
                     } else {
-                        if (pictures[5].hidden === false) {
-                            pictures[5].hidden = true
-                            pictures[7].hidden = false
-                        } else {
-                            pictures[5].hidden = false
-                            pictures[7].hidden = true
-                        }
+                        pictures[3].hidden = false
+                        pictures[7].hidden = true
                     }
                 }
             }
+        }
 
-            function change_picture_female() {
-                if (pictures[4].src !== undefined) {
-                    if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
-                        if (pictures[0].hidden === false || pictures[2].hidden === false) {
-                            if (pictures[0].hidden === false) {
-                                pictures[0].hidden = true
-                                pictures[4].hidden = false
-                            } else {
-                                pictures[6].hidden = false
-                                pictures[2].hidden = true
-                            }
-                        } else {
-                            if (pictures[1].hidden === false) {
-                                pictures[1].hidden = true
-                                pictures[5].hidden = false
-                            } else {
-                                pictures[7].hidden = false
-                                pictures[3].hidden = true
-                            }
-                        }
-                    }
-                }
-            }
-
-            function change_picture_male() {
-                if (pictures[4].hidden === false || pictures[5].hidden === false || pictures[6].hidden === false || pictures[7].hidden === false) {
-                    if (pictures[4].hidden === false || pictures[6].hidden === false) {
-                        if (pictures[4].hidden === false) {
-                            pictures[4].hidden = true
-                            pictures[0].hidden = false
-                        } else {
-                            pictures[2].hidden = false
-                            pictures[6].hidden = true
-                        }
+        function change_picture_side() {
+            //male
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                //shiny
+                if (pictures[2].hidden === false || pictures[3].hidden === false) {
+                    //front
+                    if (pictures[2].hidden === false) {
+                        pictures[2].hidden = true
+                        pictures[3].hidden = false
+                        //back
                     } else {
-                        if (pictures[5].hidden === false) {
-                            pictures[5].hidden = true
-                            pictures[1].hidden = false
-                        } else {
-                            pictures[3].hidden = false
-                            pictures[7].hidden = true
-                        }
+                        pictures[2].hidden = false
+                        pictures[3].hidden = true
                     }
-                }
-            }
-
-            function change_picture_side() {
-                //male
-                if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
-                    //shiny
-                    if (pictures[2].hidden === false || pictures[3].hidden === false) {
-                        //front
-                        if (pictures[2].hidden === false) {
-                            pictures[2].hidden = true
-                            pictures[3].hidden = false
-                            //back
-                        } else {
-                            pictures[2].hidden = false
-                            pictures[3].hidden = true
-                        }
-                        //pas shiny
-                    } else {
-                        if (pictures[0].hidden === false) {
-                            pictures[0].hidden = true
-                            pictures[1].hidden = false
-                        } else {
-                            pictures[0].hidden = false
-                            pictures[1].hidden = true
-                        }
-                    }
-                    //femele
+                    //pas shiny
                 } else {
-                    //shiny
-                    if (pictures[6].hidden === false || pictures[7].hidden === false) {
-                        if (pictures[6].hidden === false) {
-                            pictures[6].hidden = true
-                            pictures[7].hidden = false
-                        } else {
-                            pictures[6].hidden = false
-                            pictures[7].hidden = true
-                        }
-                        //pas shiny
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[1].hidden = false
                     } else {
-                        if (pictures[4].hidden === false) {
-                            pictures[4].hidden = true
-                            pictures[5].hidden = false
-                        } else {
-                            pictures[4].hidden = false
-                            pictures[5].hidden = true
-                        }
+                        pictures[0].hidden = false
+                        pictures[1].hidden = true
+                    }
+                }
+                //femele
+            } else {
+                //shiny
+                if (pictures[6].hidden === false || pictures[7].hidden === false) {
+                    if (pictures[6].hidden === false) {
+                        pictures[6].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[6].hidden = false
+                        pictures[7].hidden = true
+                    }
+                    //pas shiny
+                } else {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[5].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[5].hidden = true
                     }
                 }
             }
+        }
     </script>
 {% endblock %}

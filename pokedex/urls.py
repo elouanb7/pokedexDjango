@@ -20,5 +20,6 @@ from . import views
 
 urlpatterns = [
     # path('', views.pokedex, name="pokedex"),
-    path('<int:number>', views.pokemon, name="pokemon")
+    path('<int:number>', views.pokemon, name="pokemon"),
+    path('equipe', views.add_to_equipe, name="add_to_equipe"),
 ]

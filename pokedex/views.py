@@ -1,7 +1,9 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 import requests
+from django.views.decorators.csrf import csrf_exempt
 
-from pokedex.models import Pokemon
+from pokedex.models import Pokemon, Equipe
 
 
 # Create your views here.
@@ -28,12 +30,33 @@ def pokemon(request, number):
     pokemon_info['sprites'] = get_pokemon_sprites(pokemon)
     pokemon_info['description'] = get_pokemon_description(pokemon)
     pokemon_info['title'] = get_pokemon_title(pokemon)
+    pokemon_info['team'] = get_pokedex_team()
     paths = get_paths(request)
 
     path_info['previous'] = paths[0]
     path_info['next'] = paths[1]
     context = {'pokemon_info': pokemon_info, 'path_info': path_info}
     return render(request, template_name='pokedex.html', context=context)
+
+@csrf_exempt
+def add_to_equipe(request):
+    pokemon_id = request.POST.get("pokemonId")
+    pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_id).json()
+
+    img_default = get_animated_sprite(pokemon)
+
+    try:
+        equipe = Equipe.objects.get(name ="equipe1")
+    except Equipe.DoesNotExist:
+        equipe = Equipe(name='equipe1')
+        equipe.save()
+
+    pokemon = Pokemon(api_id=pokemon_id, img=img_default)
+    pokemon.save()
+
+    equipe.pokemons.add(pokemon)
+
+    return JsonResponse({"success": "true"})
 
 
 def get_pokemon_types(pokemon):
@@ -145,17 +168,20 @@ def get_animated_sprite(pokemon):
     animated_sprite = pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_default"]
     return animated_sprite
 
+def get_animated_sprite_shiny(pokemon):
+    return pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_shiny"]
 
-def add_to_team(pokemon):
-    addPokemon = Pokemon(pokemon.name, pokemon.img_default, pokemon.img_shiny)
-    addPokemon.save()
+def get_pokedex_team():
+    pokedex_team_images = ["", "", "", "", "", ""]
+    try:
+        equipe = Equipe.objects.get(name ="equipe1")
+        pokedex_team = equipe.pokemons.all()
 
 
-def delete_pokemon(pokemon):
-    deletePokemon = Pokemon(name=pokemon.name)
-    pokemon.delete()
+        for pokemon in pokedex_team:
+            pokedex_team_images.insert(0, pokemon.img)
+            del pokedex_team_images[-1]
+        return pokedex_team_images
 
-
-def get_pokemon_from_bdd(pokemon):
-    obj = Pokemon.objects.filter(id=pokemon.id)
-    return obj
+    except Equipe.DoesNotExist:
+        return pokedex_team_images
