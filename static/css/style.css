@@ -675,17 +675,6 @@ body {
         z-index: -1;
     }
 
-    #inputText {
-        background: rgba(0, 0, 0, 0);
-        color: white;
-        border-color: black;
-        font-size: 10px;
-        font-weight: lighter;
-        font-family: 'Press Start 2P', cursive;
-        -webkit-appearance: none;
-        -moz-appearance: textfield;
-    }
-
 
     div#stats {
         height: 140px;
@@ -984,17 +973,17 @@ body {
 
 .pixel2 {
     display: block;
-    height: auto;
+    height: 35px;
+    width: 100px;
     margin: 10px;
-    font-size: 10px;
+    font-size: 13px;
     cursor: pointer;
-    font-weight: lighter;
     font-family: 'Press Start 2P', cursive;
     color: blue;
     padding: 10px 10px;
     position: relative;
     background: yellow;
-    width: auto;
+
     z-index: 2;
     border-color: blue;
 }
@@ -1028,14 +1017,14 @@ body {
     align-items: center;
     position: absolute;
     top: 600px;
-    margin-left: 50px;
+    margin-left: 200px;
 }
 
 .form__group {
     position: relative;
     padding: 15px 0 0;
     margin-top: 10px;
-    width: 50%;
+    width: 20%;
 }
 
 .form__field {
@@ -1096,3 +1085,14 @@ body {
 .form__field, .form__field:invalid {
     box-shadow: none;
 }
+
+#inputText {
+        background: rgba(0, 0, 0, 0);
+        color: white;
+        border-color: black;
+        font-size: 10px;
+        font-weight: lighter;
+        font-family: 'Press Start 2P', cursive;
+        -webkit-appearance: none;
+        -moz-appearance: textfield;
+    }
