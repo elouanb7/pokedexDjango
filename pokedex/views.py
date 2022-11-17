@@ -1,8 +1,7 @@
 from django.shortcuts import render
-import json
 import requests
-from bs4 import BeautifulSoup as Soup
-import pprint as pp
+
+from pokedex.models import Pokemon
 
 
 # Create your views here.
@@ -19,7 +18,6 @@ def index(request):
 
 
 def pokemon(request, number):
-
     pokemon_info = {}
     path_info = {}
     pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(number)).json()
@@ -141,3 +139,23 @@ def get_user_input(request):
     path = splited_path + str(request.GET.get("inputText"))
     print(path)
     return path
+
+
+def get_animated_sprite(pokemon):
+    animated_sprite = pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_default"]
+    return animated_sprite
+
+
+def add_to_team(pokemon):
+    addPokemon = Pokemon(pokemon.name, pokemon.img_default, pokemon.img_shiny)
+    addPokemon.save()
+
+
+def delete_pokemon(pokemon):
+    deletePokemon = Pokemon(name=pokemon.name)
+    pokemon.delete()
+
+
+def get_pokemon_from_bdd(pokemon):
+    obj = Pokemon.objects.filter(id=pokemon.id)
+    return obj
