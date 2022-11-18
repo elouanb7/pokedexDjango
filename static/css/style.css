@@ -645,7 +645,7 @@ body {
     div#curve2_right {
         width: 216px;
         height: 100px;
-        background-color: inherit;
+        background-color: black;
         float: left;
         z-index: +1;
         position: absolute;
@@ -717,7 +717,7 @@ body {
         left: 101px;
     }
 
-    div.blueButton {
+    a.blueButton {
         height: 35px;
         width: 45px;
         background-color: #003300;
@@ -846,10 +846,9 @@ body {
 
     button#yellowBox1 {
         border: none;
-        width: 140px;
-        height: 70px;
+
         z-index: 1;
-        background-color: #ffff00;
+        background-color: #9d9d1d;
         font-family: 'Press Start 2P', cursive;
         cursor: pointer;
         font-size: 14px;
@@ -857,43 +856,42 @@ body {
         position: absolute;
         top: 415px;
         left: 25px;
-
-        border-radius: 15px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        -o-border-radius: 15px;
-
-        box-shadow: 0 0 20px #ff6600 inset;
-        -webkit-box-shadow: 0 0 20px #ff6600 inset;
-        -moz-box-shadow: 0 0 20px #ff6600 inset;
-        -o-box-shadow: 0 0 20px #ff6600 inset;
-
-
     }
+    .pushable {
+    background: hsl(340deg 100% 32%);
+    border-radius: 12px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline-offset: 4px;
+  }
+  .front {
+    display: block;
+    font-size: 14px;
+    padding: 20px 14px;
+    border-radius: 12px;
+
+    transform: translateY(-6px);
+    background: #ffff00;
+    color: black;
+  }
+
+  .pushable:active .front {
+    transform: translateY(-2px);
+  }
 
     button#yellowBox2 {
         cursor: pointer;
         font-size: 14px;
         font-family: 'Press Start 2P', cursive;
         border: none;
-        width: 140px;
-        height: 70px;
         z-index: 1;
-        background-color: #ffff00;
+        background-color: #9d9d1d;
 
         position: absolute;
         top: 415px;
         left: 185px;
 
-        border-radius: 15px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        -o-border-radius: 15px;
-
-        box-shadow: 0 0 20px #ff6600 inset;
-        -webkit-box-shadow: 0 0 20px #ff6600 inset;
-        -moz-box-shadow: 0 0 20px #ff6600 inset;
-        -o-box-shadow: 0 0 20px #ff6600 inset;
     }
 
 }
@@ -985,13 +983,13 @@ body {
     font-size: 13px;
     cursor: pointer;
     font-family: 'Press Start 2P', cursive;
-    color: blue;
+    color: #365fa3;
     padding: 10px 10px;
     position: relative;
-    background: yellow;
+    background: #feca1b;
 
     z-index: 2;
-    border-color: blue;
+    border-color: #2a75bb;
 }
 
 .pixel2::before {
@@ -1002,7 +1000,7 @@ body {
     bottom: 10px;
     left: -10px;
     right: -10px;
-    background: yellow;
+    background: #feca1b;
     z-index: -1;
 }
 
@@ -1014,7 +1012,7 @@ body {
     bottom: 4px;
     left: -6px;
     right: -6px;
-    background: blue;
+    background: #2a75bb;
     z-index: -1;
 }
 
@@ -1030,7 +1028,7 @@ body {
     position: relative;
     padding: 15px 0 0;
     margin-top: 10px;
-    width: 32%;
+    width: 20%;
 }
 
 .form__field {
@@ -1073,7 +1071,7 @@ body {
     padding-bottom: 6px;
     font-weight: 700;
     border-width: 3px;
-    border-image: linear-gradient(to right, #11998e, #38ef7d);
+    border-image: linear-gradient(to right, #2a75bb, #feca1b);
     border-image-slice: 1;
 }
 

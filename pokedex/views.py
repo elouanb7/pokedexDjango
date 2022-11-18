@@ -8,9 +8,6 @@ from pokedex.models import Pokemon, Equipe
 
 
 # Create your views here.
-def index(request):
-    context = {'test': "test"}
-    return render(request, template_name='index.html', context=context)
 
 
 # def pokedex(request):
@@ -45,23 +42,23 @@ def pokemon(request, number):
     context = {'pokemon_info': pokemon_info, 'path_info': path_info}
     return render(request, template_name='pokedex.html', context=context)
 
+
 @csrf_exempt
 def add_to_equipe(request, team_id):
     pokemon_id = request.POST.get("pokemonId")
 
     try:
-        equipe = Equipe.objects.get(name = str(team_id))
+        equipe = Equipe.objects.get(name=str(team_id))
     except Equipe.DoesNotExist:
         equipe = Equipe(name=str(team_id))
         equipe.save()
 
-    if len(equipe.pokemons.filter(api_id = pokemon_id)) > 0:
+    if len(equipe.pokemons.filter(api_id=pokemon_id)) > 0:
         return JsonResponse({"success": "false", "message": "Le pokémon est déjà dans l'équipe"}, status=400)
 
     pokemons_team = equipe.pokemons.all()
     if len(pokemons_team) >= 6:
         return JsonResponse({"success": "false", "message": "L'équipe est déjà pleine"}, status=400)
-
 
     pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_id).json()
     img_default = get_animated_sprite(pokemon)
@@ -73,16 +70,18 @@ def add_to_equipe(request, team_id):
 
     return JsonResponse({"success": "true", "pokemon": model_to_dict(pokemon)})
 
+
 @csrf_exempt
 def delete_from_equipe(request, team_id, pokemon_id):
     try:
-        equipe = Equipe.objects.get(name = str(team_id))
+        equipe = Equipe.objects.get(name=str(team_id))
     except Equipe.DoesNotExist:
         return JsonResponse({"success": "false"}, status=404)
 
     pokemon = Pokemon.objects.get(api_id=pokemon_id)
-
     equipe.pokemons.remove(pokemon)
+
+    Pokemon.objects.get(api_id=pokemon_id).delete()
 
     return JsonResponse({"success": "true"})
 
@@ -196,15 +195,16 @@ def get_animated_sprite(pokemon):
     animated_sprite = pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_default"]
     return animated_sprite
 
+
 def get_animated_sprite_shiny(pokemon):
     return pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_shiny"]
+
 
 def get_pokedex_team():
     pokedex_team_images = [{}, {}, {}, {}, {}, {}]
     try:
-        equipe = Equipe.objects.get(name = 1)
+        equipe = Equipe.objects.get(name=1)
         pokedex_team = equipe.pokemons.all()
-
 
         for pokemon in pokedex_team:
             pokedex_team_images.insert(0, {

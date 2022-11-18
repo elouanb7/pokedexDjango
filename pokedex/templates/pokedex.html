@@ -98,19 +98,31 @@
             </div>
             <div id="listBlueButtons">
                 {% for pokemon in pokemon_info.team %}
-                    <div class="blueButton">
-                        {% if pokemon.pokemon_image %}
-                            <img src="{{ pokemon.pokemon_image }}" alt="picture" height="30" id="{{ pokemon.pokemon_id }}"/>
-                        {% endif %}
-                    </div>
+                    {% if pokemon.pokemon_image %}
+                        <a class="blueButton" href="/pokedex/{{ pokemon.pokemon_id }}">
+                                <img src="{{ pokemon.pokemon_image }}" alt="picture" height="30" id="{{ pokemon.pokemon_id }}"/>
+                        </a>
+                    {% else %}
+                        <a class="blueButton">
+
+                        </a>
+                    {% endif %}
                 {% endfor %}
             </div>
             <div id="miniButtonGlass4"></div>
             <div id="miniButtonGlass5"></div>
             <div id="barbutton3"></div>
             <div id="barbutton4"></div>
-            <button onclick="deleteFromEquipe()" id="yellowBox1">SUPPRIMER</button>
-            <button onclick="addToEquipe()" id="yellowBox2">AJOUTER</button>
+            <button onclick="deleteFromEquipe()" id="yellowBox1" class="pushable">
+                <span class="front">
+                    SUPPRIMER
+                </span>
+            </button>
+            <button onclick="addToEquipe()" id="yellowBox2" class="pushable">
+                <span class="front">
+                    AJOUTER
+                </span>
+            </button>
             <div id="bg_curve1_right"></div>
             <div id="bg_curve2_right"></div>
             <div id="curve1_right"></div>
@@ -143,8 +155,8 @@
 
                     imgPokemon.src = response.pokemon.img
                     imgPokemon.id = response.pokemon.api_id
+                    imgPokemon.height = 30
 
-                    console.log(buttons)
 
                     buttonAvailable = buttons.find(btn => btn.children.length === 0)
                     buttonAvailable.appendChild(imgPokemon)
