@@ -21,5 +21,6 @@ from . import views
 urlpatterns = [
     # path('', views.pokedex, name="pokedex"),
     path('<int:number>', views.pokemon, name="pokemon"),
-    path('equipe', views.add_to_equipe, name="add_to_equipe"),
+    path('equipe/<int:team_id>', views.add_to_equipe, name="add_to_equipe"),
+    path('equipe/<int:team_id>/<int:pokemon_id>', views.delete_from_equipe, name='delete_from_equipe'),
 ]

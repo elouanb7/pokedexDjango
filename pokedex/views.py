@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render
 import requests
@@ -22,7 +23,13 @@ def index(request):
 def pokemon(request, number):
     pokemon_info = {}
     path_info = {}
-    pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(number)).json()
+    pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(number))
+
+    if pokemon:
+        pokemon = pokemon.json()
+    else:
+        return JsonResponse({"success": "false", "message": "Le pokémon n'existe pas"}, status=400)
+
     pokemon_info['types'] = get_pokemon_types(pokemon)
     pokemon_info['name'] = get_pokemon_name(pokemon)
     pokemon_info['weight'] = get_pokemon_weight(pokemon)
@@ -39,22 +46,43 @@ def pokemon(request, number):
     return render(request, template_name='pokedex.html', context=context)
 
 @csrf_exempt
-def add_to_equipe(request):
+def add_to_equipe(request, team_id):
     pokemon_id = request.POST.get("pokemonId")
-    pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_id).json()
-
-    img_default = get_animated_sprite(pokemon)
 
     try:
-        equipe = Equipe.objects.get(name ="equipe1")
+        equipe = Equipe.objects.get(name = str(team_id))
     except Equipe.DoesNotExist:
-        equipe = Equipe(name='equipe1')
+        equipe = Equipe(name=str(team_id))
         equipe.save()
+
+    if len(equipe.pokemons.filter(api_id = pokemon_id)) > 0:
+        return JsonResponse({"success": "false", "message": "Le pokémon est déjà dans l'équipe"}, status=400)
+
+    pokemons_team = equipe.pokemons.all()
+    if len(pokemons_team) >= 6:
+        return JsonResponse({"success": "false", "message": "L'équipe est déjà pleine"}, status=400)
+
+
+    pokemon = requests.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_id).json()
+    img_default = get_animated_sprite(pokemon)
 
     pokemon = Pokemon(api_id=pokemon_id, img=img_default)
     pokemon.save()
 
     equipe.pokemons.add(pokemon)
+
+    return JsonResponse({"success": "true", "pokemon": model_to_dict(pokemon)})
+
+@csrf_exempt
+def delete_from_equipe(request, team_id, pokemon_id):
+    try:
+        equipe = Equipe.objects.get(name = str(team_id))
+    except Equipe.DoesNotExist:
+        return JsonResponse({"success": "false"}, status=404)
+
+    pokemon = Pokemon.objects.get(api_id=pokemon_id)
+
+    equipe.pokemons.remove(pokemon)
 
     return JsonResponse({"success": "true"})
 
@@ -172,14 +200,17 @@ def get_animated_sprite_shiny(pokemon):
     return pokemon["sprites"]["versions"]["generation-v"]["black-white"]["animated"]["front_shiny"]
 
 def get_pokedex_team():
-    pokedex_team_images = ["", "", "", "", "", ""]
+    pokedex_team_images = [{}, {}, {}, {}, {}, {}]
     try:
-        equipe = Equipe.objects.get(name ="equipe1")
+        equipe = Equipe.objects.get(name = 1)
         pokedex_team = equipe.pokemons.all()
 
 
         for pokemon in pokedex_team:
-            pokedex_team_images.insert(0, pokemon.img)
+            pokedex_team_images.insert(0, {
+                "pokemon_id": pokemon.api_id,
+                "pokemon_image": pokemon.img
+            })
             del pokedex_team_images[-1]
         return pokedex_team_images
 
