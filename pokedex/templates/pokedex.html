@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% block title %}Pokedex Ouvert{% endblock %}
+{% block head %}{% endblock %}
+{% block main %}
+
+    <div id="pokedex">
+        <div id="left">
+            <div id="logo"></div>
+            <div id="bg_curve1_left"></div>
+            <div id="bg_curve2_left"></div>
+            <div id="curve1_left">
+                <div id="buttonGlass">
+                    <div id="reflect"></div>
+                </div>
+                <div id="miniButtonGlass1"></div>
+                <div id="miniButtonGlass2"></div>
+                <div id="miniButtonGlass3"></div>
+            </div>
+            <div id="curve2_left">
+                <div id="junction">
+                    <div id="junction1"></div>
+                    <div id="junction2"></div>
+                </div>
+            </div>
+            <div id="screen">
+                <div id="topPicture">
+                    <div id="buttontopPicture1"></div>
+                    <div id="buttontopPicture2"></div>
+                </div>
+                <div id="picture">
+                    <div id="picture0">
+                        <img src="{{ pokemon_info.sprites.sprite_front_default }}" alt="picture"
+                             height="170"/>
+                    </div>
+                    <div id="picture1" hidden><img src="{{ pokemon_info.sprites.sprite_back_default }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture2" hidden><img src="{{ pokemon_info.sprites.sprite_front_shiny }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture3" hidden><img src="{{ pokemon_info.sprites.sprite_back_shiny }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture4" hidden><img src="{{ pokemon_info.sprites.sprite_female_front }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture5" hidden><img src="{{ pokemon_info.sprites.sprite_female_back }}" alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture6" hidden><img src="{{ pokemon_info.sprites.sprite_female_front_shiny }}"
+                                                   alt="picture"
+                                                   height="170"/></div>
+                    <div id="picture7" hidden><img src="{{ pokemon_info.sprites.sprite_female_back_shiny }}"
+                                                   alt="picture"
+                                                   height="170"/></div>
+                </div>
+                <div id="buttonbottomPicture" style="cursor: pointer;"></div>
+                <div id="speakers">
+                    <div class="sp"></div>
+                    <div class="sp"></div>
+                    <div class="sp"></div>
+                    <div class="sp"></div>
+                </div>
+            </div>
+            <div id="bigbluebutton" style="cursor: pointer;"></div>
+
+            <div id="barbutton1" style="cursor: pointer;"></div>
+            <div id="barbutton2" style="cursor: pointer;"></div>
+            <div id="cross">
+                <a href="{{ path_info.previous }}">
+                    <div id="leftcross">
+                        <div id="leftT"></div>
+                    </div>
+                </a>
+                <div id="topcross">
+                    <div id="upT"></div>
+                </div>
+                <a href="{{ path_info.next }}">
+                    <div id="rightcross">
+                        <div id="rightT"></div>
+                    </div>
+                </a>
+                <div id="midcross">
+                    <div id="midCircle"></div>
+                </div>
+                <div id="botcross">
+                    <div id="downT"></div>
+                </div>
+            </div>
+        </div>
+        <div id="right">
+            <div id="stats">
+                <strong>Nom:</strong>
+                {{ pokemon_info.name }}
+                <br/>
+                <strong>Type:</strong>
+                {{ pokemon_info.types }}
+                <br/>
+                <strong>Taille:</strong>{{ pokemon_info.height }}<br/>
+                <strong>Poids:</strong>{{ pokemon_info.weight }}<br/><br/>
+                <strong>{{ pokemon_info.title }}</strong><br/>
+                {{ pokemon_info.description }}
+            </div>
+            <div id="listBlueButtons">
+                {% for pokemon in pokemon_info.team %}
+                    {% if pokemon.pokemon_image %}
+                        <a class="blueButton" href="/pokedex/{{ pokemon.pokemon_id }}">
+                                <img src="{{ pokemon.pokemon_image }}" alt="picture" height="30" id="{{ pokemon.pokemon_id }}"/>
+                        </a>
+                    {% else %}
+                        <a class="blueButton">
+
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div id="miniButtonGlass4"></div>
+            <div id="miniButtonGlass5"></div>
+            <div id="barbutton3"></div>
+            <div id="barbutton4"></div>
+            <button onclick="deleteFromEquipe()" id="yellowBox1" class="pushable">
+                <span class="front">
+                    SUPPRIMER
+                </span>
+            </button>
+            <button onclick="addToEquipe()" id="yellowBox2" class="pushable">
+                <span class="front">
+                    AJOUTER
+                </span>
+            </button>
+            <div id="bg_curve1_right"></div>
+            <div id="bg_curve2_right"></div>
+            <div id="curve1_right"></div>
+            <div id="curve2_right"></div>
+        </div>
+        <div id="divInput" class="form__group field">
+            <input class="form__field" type="number" id="input" value="null" placeholder="Entrez l'id d'un pokemon" >
+            <label class="form__label" id="labelInput" for="input"></label>
+            <input class="pixel2" type="button" onclick="search()" value="Search">
+        </div>
+    </div>
+
+
+
+{% endblock %}
+{% block javascript %}
+    <script>
+        const addToEquipe = () => {
+            let formData = new FormData();
+            let pokemon_id = window.location.href.split('/pokedex/')[1]
+            formData.append('pokemonId', pokemon_id);
+
+            const request = new Request('equipe/1', {method: 'POST', body: formData});
+
+            fetch(request)
+                .then(response => response.json())
+                .then(response => {
+                    buttons = [...document.getElementsByClassName("blueButton")];
+                    var imgPokemon = document.createElement("img");
+
+                    imgPokemon.src = response.pokemon.img
+                    imgPokemon.id = response.pokemon.api_id
+                    imgPokemon.height = 30
+
+
+                    buttonAvailable = buttons.find(btn => btn.children.length === 0)
+                    buttonAvailable.appendChild(imgPokemon)
+                })
+        }
+
+        const deleteFromEquipe = () => {
+            let formData = new FormData();
+            let pokemon_id = window.location.href.split('/pokedex/')[1]
+            formData.append('pokemonId', pokemon_id);
+
+            const request = new Request('equipe/1/'+pokemon_id, {method: 'DELETE', body: formData});
+
+            fetch(request)
+                .then(response => {
+                    let img = document.getElementById(pokemon_id)
+                    img.remove()
+                })
+        }
+
+        function search() {
+            let input = document.getElementById("input").value
+            if (input !== "" && input !== "0") {
+                let base_url = window.location.href.split('/pokedex/')[0]
+                window.location.replace(base_url + '/pokedex/' + input.toString());
+            }
+        }
+
+        let pictures = [document.getElementById("picture0"), document.getElementById("picture1"),
+            document.getElementById("picture2"), document.getElementById("picture3"),
+            document.getElementById("picture4"), document.getElementById("picture5"),
+            document.getElementById("picture6"), document.getElementById("picture7")]
+
+        document.getElementById('bigbluebutton').addEventListener('click', change_picture_shiny);
+        document.getElementById('barbutton1').addEventListener('click', change_picture_female);
+        document.getElementById('barbutton2').addEventListener('click', change_picture_male);
+        document.getElementById('buttonbottomPicture').addEventListener('click', change_picture_side);
+
+        function change_picture_shiny() {
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                if (pictures[0].hidden === false || pictures[2].hidden === false) {
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[2].hidden = false
+                    } else {
+                        pictures[0].hidden = false
+                        pictures[2].hidden = true
+                    }
+                } else {
+                    if (pictures[1].hidden === false) {
+                        pictures[1].hidden = true
+                        pictures[3].hidden = false
+                    } else {
+                        pictures[1].hidden = false
+                        pictures[3].hidden = true
+                    }
+                }
+            } else {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[6].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[6].hidden = true
+                    }
+                } else {
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[5].hidden = false
+                        pictures[7].hidden = true
+                    }
+                }
+            }
+        }
+
+        function change_picture_female() {
+            if (pictures[4].src !== undefined) {
+                if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                    if (pictures[0].hidden === false || pictures[2].hidden === false) {
+                        if (pictures[0].hidden === false) {
+                            pictures[0].hidden = true
+                            pictures[4].hidden = false
+                        } else {
+                            pictures[6].hidden = false
+                            pictures[2].hidden = true
+                        }
+                    } else {
+                        if (pictures[1].hidden === false) {
+                            pictures[1].hidden = true
+                            pictures[5].hidden = false
+                        } else {
+                            pictures[7].hidden = false
+                            pictures[3].hidden = true
+                        }
+                    }
+                }
+            }
+        }
+
+        function change_picture_male() {
+            if (pictures[4].hidden === false || pictures[5].hidden === false || pictures[6].hidden === false || pictures[7].hidden === false) {
+                if (pictures[4].hidden === false || pictures[6].hidden === false) {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[0].hidden = false
+                    } else {
+                        pictures[2].hidden = false
+                        pictures[6].hidden = true
+                    }
+                } else {
+                    if (pictures[5].hidden === false) {
+                        pictures[5].hidden = true
+                        pictures[1].hidden = false
+                    } else {
+                        pictures[3].hidden = false
+                        pictures[7].hidden = true
+                    }
+                }
+            }
+        }
+
+        function change_picture_side() {
+            //male
+            if (pictures[0].hidden === false || pictures[1].hidden === false || pictures[2].hidden === false || pictures[3].hidden === false) {
+                //shiny
+                if (pictures[2].hidden === false || pictures[3].hidden === false) {
+                    //front
+                    if (pictures[2].hidden === false) {
+                        pictures[2].hidden = true
+                        pictures[3].hidden = false
+                        //back
+                    } else {
+                        pictures[2].hidden = false
+                        pictures[3].hidden = true
+                    }
+                    //pas shiny
+                } else {
+                    if (pictures[0].hidden === false) {
+                        pictures[0].hidden = true
+                        pictures[1].hidden = false
+                    } else {
+                        pictures[0].hidden = false
+                        pictures[1].hidden = true
+                    }
+                }
+                //femele
+            } else {
+                //shiny
+                if (pictures[6].hidden === false || pictures[7].hidden === false) {
+                    if (pictures[6].hidden === false) {
+                        pictures[6].hidden = true
+                        pictures[7].hidden = false
+                    } else {
+                        pictures[6].hidden = false
+                        pictures[7].hidden = true
+                    }
+                    //pas shiny
+                } else {
+                    if (pictures[4].hidden === false) {
+                        pictures[4].hidden = true
+                        pictures[5].hidden = false
+                    } else {
+                        pictures[4].hidden = false
+                        pictures[5].hidden = true
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
